@@ -8,10 +8,10 @@ import Dashboard from "@/pages/Dashboard/Dashboard";
 import RoleBasedRoutes from "./RoleBaseRoutes";
 import PublicRoute from "./PublicRoutes";
 import CreateEvent from "@/pages/Dashboard/CreateEvent";
-import EditEvent from "@/pages/Dashboard/EditEvent";
 import MyEvents from "@/pages/Dashboard/MyEvents";
 import Participents from "@/pages/Dashboard/Participents";
 import DashboardLayout from "@/Layout/DashboardLayout";
+import EditEvent from "@/pages/Dashboard/EditEvent";
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -33,8 +33,8 @@ const AppRoutes = () => {
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="create_event" element={<CreateEvent />} />
-            <Route path="edit_event" element={<EditEvent />} />
             <Route path="my-events" element={<MyEvents />} />
+            <Route path="edit_event/:eventId" element={<EditEvent />} />
             <Route path="participents" element={<Participents />} />
           </Route>
         </Route>

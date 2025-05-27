@@ -6,7 +6,7 @@ export const ClientInfoContext = createContext(null);
 export const ClientInfoProvider = ({ children }) => {
   const { user, sessionChecked } = useAuth();
   const [clientData, setclientData] = useState([]);
-  const [LoanData, setLoanData] = useState([]);
+  const [EventData, setEventData] = useState([]);
   const [loading, setloading] = useState(true);
   const fetchData = async () => {
     try {
@@ -19,18 +19,18 @@ export const ClientInfoProvider = ({ children }) => {
           if (error) throw error;
           if (data) {
             setclientData(data);
-            // try {
-            //   const { data: LoanData, error: LoanError } = await supabase
-            //     .from("Loan_Requests")
-            //     .select("*")
-            //     .eq("user_id", user.id);
-            //   if (LoanError) throw LoanError;
-            //   if (LoanData) {
-            //     setLoanData(LoanData);
-            //   }
-            // } catch (error) {
-            //   console.log(error);
-            // }
+            try {
+              const { data: eventData, error: eventError } = await supabase
+                .from("events")
+                .select("*")
+                .eq("user_Id", user.id);
+              if (eventError) throw eventError;
+              if (eventData) {
+                setEventData(eventData);
+              }
+            } catch (error) {
+              console.log(error);
+            }
           }
         } catch (error) {
           console.log(error);
@@ -54,7 +54,7 @@ export const ClientInfoProvider = ({ children }) => {
       value={{
         loading,
         clientData,
-        LoanData,
+        EventData,
         fetchData,
         clearClientData: () => setclientData([]),
       }}

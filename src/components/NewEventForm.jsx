@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, use, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "./ui/input";
+import { useAuth } from "@/context/RouteContext";
 import {
   Select,
   SelectContent,
@@ -25,6 +26,10 @@ import {
 const NewEventForm = () => {
   const [loading, setloading] = useState(false);
   const notify = () => toast.success("Event Created");
+  const notifyError = () => toast.error("Something went wrong");
+  let { user } = useAuth();
+  const today = new Date().toISOString().split("T")[0];
+
   const form = useForm({
     defaultValues: {
       title: "",
@@ -41,33 +46,37 @@ const NewEventForm = () => {
 
     try {
       setloading(true);
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
 
       const userId = user.id;
 
       let imageUrl = null;
 
       if (image && image[0]) {
-        const file = image[0];
-        const fileExt = file.name.split(".").pop();
+        const avatarFile = image[0];
+        const fileExt = avatarFile.name.split(".").pop();
         const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
         const filePath = `events/${fileName}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from("event-images")
-          .upload(filePath, file);
+          .upload(filePath, avatarFile, {
+            cacheControl: "3600",
+            upsert: false,
+          });
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error("Upload error:", uploadError.message);
+          notifyError();
+          throw uploadError;
+        }
 
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("event-images").getPublicUrl(filePath);
+        // get public URL
+        const { data: publicData } = supabase.storage
+          .from("event-images")
+          .getPublicUrl(filePath);
 
-        imageUrl = publicUrl;
+        imageUrl = publicData?.publicUrl;
       }
-
       const { error } = await supabase.from("events").insert({
         title: title,
         description: description,
@@ -85,6 +94,7 @@ const NewEventForm = () => {
         window.location.reload();
       }, 3000);
     } catch (err) {
+      notifyError();
       console.error("Error submitting event:", err.message);
     } finally {
       setloading(false);
@@ -127,7 +137,7 @@ const NewEventForm = () => {
                   <FormItem className="space-y-2 mt-5">
                     <FormLabel>Date of Event</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input type="date" {...field} min={today} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -193,10 +203,7 @@ const NewEventForm = () => {
                       <Input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          field.onChange(file);
-                        }}
+                        onChange={(e) => field.onChange(e.target.files)}
                       />
                     </FormControl>
                     <FormMessage />

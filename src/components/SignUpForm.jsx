@@ -29,7 +29,6 @@ const SignupForm = () => {
 
   const onSubmit = async (formData) => {
     const { firstname, lastname, email, password } = formData;
-    console.log(firstname, lastname, email, password);
     try {
       setloading(true);
       const { data, error } = await supabase.auth.signUp({

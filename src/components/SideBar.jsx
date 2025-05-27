@@ -7,7 +7,6 @@ import MyLogo from "./MyLogo";
 const navItems = [
   { name: "Dashboard", icon: Home, to: "/dashboard", end: true },
   { name: "Create Event", icon: PlusCircle, to: "/dashboard/create_event" },
-  { name: "Edit Event", icon: Pencil, to: "/dashboard/edit_event" },
   { name: "My Events", icon: NotebookPen, to: "/dashboard/my-events" },
   { name: "Participents", icon: User, to: "/dashboard/participents" },
 ];
