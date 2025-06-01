@@ -1,9 +1,9 @@
-import { React, use, useState } from "react";
+import { React, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import supabase from "@/supabase/client";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Textarea } from "./ui/textarea";
 import {
   Form,
@@ -24,6 +24,7 @@ import {
 } from "./ui/select";
 
 const NewEventForm = () => {
+  const imageRef = useRef(null);
   const [loading, setloading] = useState(false);
   const notify = () => toast.success("Event Created");
   const notifyError = () => toast.error("Something went wrong");
@@ -40,6 +41,7 @@ const NewEventForm = () => {
       image: null,
     },
   });
+  const { reset } = form;
   const onSubmit = async (newLoanData) => {
     const { title, dateOfEvent, Location, category, description, image } =
       newLoanData;
@@ -91,8 +93,11 @@ const NewEventForm = () => {
 
       notify();
       setTimeout(() => {
-        window.location.reload();
-      }, 3000);
+        reset();
+        if (imageRef.current) {
+          imageRef.current.value = null;
+        }
+      }, 1000);
     } catch (err) {
       notifyError();
       console.error("Error submitting event:", err.message);
@@ -201,6 +206,7 @@ const NewEventForm = () => {
                     <FormLabel>Event Image</FormLabel>
                     <FormControl>
                       <Input
+                        ref={imageRef}
                         type="file"
                         accept="image/*"
                         onChange={(e) => field.onChange(e.target.files)}

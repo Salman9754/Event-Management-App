@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertCircle } from "lucide-react";
 import "../../styles/dashboard.css";
-import { ToastContainer, Bounce, toast } from "react-toastify";
+import { toast } from "sonner";
 import supabase from "@/supabase/client";
 import {
   Select,
@@ -35,7 +35,7 @@ const EditEvent = () => {
   const { eventId } = useParams();
   const { EventData, loading: contextLoading } = useClientInfo();
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
-   const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
 
   const [eventData, setEventData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -71,7 +71,7 @@ const EditEvent = () => {
       .eq("id", eventId);
 
     if (error) {
-      console.error("Update failed:", error.message);
+      toast.error(error.message);
     } else {
       toast.success("Event Updated");
     }
@@ -82,19 +82,6 @@ const EditEvent = () => {
   return (
     <>
       <div className="new_loan_container mt-5">
-        <ToastContainer
-          position="top-right"
-          autoClose={2500}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick={false}
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          transition={Bounce}
-        />
         <Card className="px-3 bg-rose-600 text-white ">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

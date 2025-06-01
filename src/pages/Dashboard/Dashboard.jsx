@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import DashboardCard from "@/components/DashboardCard";
 import { CreditCard, CheckCircle, Gauge, Users } from "lucide-react";
-import '../../styles/dashboard.css'
+import "../../styles/dashboard.css";
 import { Button } from "@/components/ui/button";
 import { useClientInfo } from "@/context/ClientInfoContext";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,7 +17,17 @@ import {
 import LogOutBtn from "@/components/LogOutBtn";
 
 const DashboardPage = () => {
-  const { loading, clientData } = useClientInfo();
+  const { loading, clientData, EventData } = useClientInfo();
+  const [pending, setpending] = useState([]);
+  const [Approved, setApproved] = useState([]);
+  useEffect(() => {
+    if (EventData?.length) {
+      const pendingData = EventData.filter((item) => item.status === "pending");
+      setpending(pendingData);
+      const approved = EventData.filter((item) => item.status === "approved");
+      setApproved(approved);
+    }
+  }, [EventData]);
 
   if (loading) {
     return (
@@ -90,7 +100,7 @@ const DashboardPage = () => {
           <div className="cards w-full">
             <DashboardCard
               heading={" My Events"}
-              headingCount={0}
+              headingCount={EventData.length}
               icon={CreditCard}
               iconColor={"text-blue-700"}
             />
@@ -98,7 +108,7 @@ const DashboardPage = () => {
           <div className="cards w-full">
             <DashboardCard
               heading={"Approved Events"}
-              headingCount={0}
+              headingCount={Approved.length}
               icon={CheckCircle}
               iconColor={"text-green-500"}
             />
@@ -106,7 +116,7 @@ const DashboardPage = () => {
           <div className="cards w-full">
             <DashboardCard
               heading={"Pending Events"}
-              headingCount={0}
+              headingCount={pending.length}
               icon={Gauge}
               iconColor={"text-amber-300"}
             />

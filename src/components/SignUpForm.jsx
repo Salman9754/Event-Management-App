@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 import { useForm } from "react-hook-form";
 import supabase from "@/supabase/client";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import {
   Form,
@@ -58,7 +58,7 @@ const SignupForm = () => {
         }
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
   };
 

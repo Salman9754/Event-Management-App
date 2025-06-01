@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 import supabase from "@/supabase/client";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useAuth } from "@/context/RouteContext";
 import {
   Form,
