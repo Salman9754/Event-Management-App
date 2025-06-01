@@ -87,7 +87,7 @@ A full-stack web application that enables users to create, manage, and participa
 ---
 
 ## 📦 Deployment  
-- **Frontend**: [Vercel](https://my-eventify.vercel.app/)  
+- **Frontend**: [Vercel](https://vercel.com/)  
 - **Backend**: Supabase (Auth, Database, and Storage)
 
 ---
