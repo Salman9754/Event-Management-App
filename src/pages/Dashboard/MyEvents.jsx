@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/dashboard.css";
 import supabase from "@/supabase/client";
 import DeleteModal from "@/components/DeleteModal";
+import { toast } from "sonner";
 
 const MyEvents = () => {
   const navigate = useNavigate();
@@ -31,10 +32,10 @@ const MyEvents = () => {
     const { error } = await supabase.from("events").delete().eq("id", eventId);
 
     if (error) {
-      console.error("Failed to delete event:", error.message);
+      toast.error("Failed to delete event:", error.message);
     } else {
       fetchData();
-      console.log("Event deleted successfully");
+      toast.success("Event Deleted");
     }
   };
   useEffect(() => {
@@ -74,7 +75,9 @@ const MyEvents = () => {
                 >
                   Edit
                 </Button>
-                <DeleteModal onConfirm={() => handleDelete(event.id,event.image_url)} />
+                <DeleteModal
+                  onConfirm={() => handleDelete(event.id, event.image_url)}
+                />
               </div>
             </CardContent>
           </Card>
