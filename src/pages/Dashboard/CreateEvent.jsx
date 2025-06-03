@@ -11,7 +11,7 @@ import { AlertCircle } from "lucide-react";
 const CreateEvent = () => {
   return (
     <>
-      <div className="new_loan_container mt-5">
+      <div className="mobile_container mt-5">
         <Card className="px-3 bg-rose-600 text-white ">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

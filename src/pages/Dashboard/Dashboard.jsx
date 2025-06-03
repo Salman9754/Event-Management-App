@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useClientInfo } from "@/context/ClientInfoContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
-import supabase from "@/supabase/client";
 import {
   Card,
   CardHeader,

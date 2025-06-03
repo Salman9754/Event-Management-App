@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Home, FileText, PlusCircle, User, Menu, X, Pencil, NotebookPen} from "lucide-react";
+import {
+  Home,
+  FileText,
+  PlusCircle,
+  User,
+  Menu,
+  X,
+  NotebookPen,
+} from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import MyLogo from "./MyLogo";
@@ -82,7 +90,6 @@ export default function Sidebar() {
             </div>
             {navLinks}
           </aside>
-        
         </div>
       )}
     </>

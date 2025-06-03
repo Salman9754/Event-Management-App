@@ -7,10 +7,13 @@ import "../../styles/dashboard.css";
 import supabase from "@/supabase/client";
 import DeleteModal from "@/components/DeleteModal";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const MyEvents = () => {
   const navigate = useNavigate();
-  const { EventData, fetchData } = useClientInfo();
+  const { EventData, fetchData, loading } = useClientInfo();
   const handleDelete = async (eventId, image) => {
     try {
       const pathStartIndex =
@@ -42,24 +45,70 @@ const MyEvents = () => {
     fetchData();
   }, []);
   if (!EventData) return;
-  console.log(EventData);
-
+  if (loading) {
+    return (
+      <>
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-4 mt-8">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="space-y-4">
+              <Skeleton className="h-8 w-1/2" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-3/4" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-4 ">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="space-y-4">
+              <Skeleton className="h-8 w-1/2" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-3/4" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-4 ">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="space-y-4">
+              <Skeleton className="h-8 w-1/2" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-3/4" />
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
   if (EventData.length === 0) {
     return <p>No events create one</p>;
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 new_loan_container">
+    <div className="grid grid-cols-1 lg:grid-cols-2 xxl:grid-cols-3 xxxl:grid-cols-5 gap-5  mobile_container">
       {EventData.map((event) => {
         return (
-          <Card key={event.id} className="w-full max-w-md mx-auto">
+          <Card className="w-full max-w-md mx-auto" key={event.id}>
             <CardContent className="p-4">
-              <img
-                src={event.image_url}
-                alt={event.title}
-                className="rounded-lg mb-4 h-48 w-full object-cover"
-              />
-              <h2 className="text-xl font-semibold">{event.title}</h2>
+              <Link to={`/dashboard/event_detail/${event.id}`}>
+                <img
+                  src={event.image_url}
+                  alt={event.title}
+                  className="rounded-lg mb-4 h-48 w-full object-cover"
+                />
+                <div className="head flex justify-between">
+                  <h2 className="text-xl font-semibold">{event.title}</h2>
+                  <Badge
+                    className={
+                      event.status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : event.status === "approved"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }
+                  >
+                    {event.status}
+                  </Badge>
+                </div>
+              </Link>
               <p className="text-sm text-muted-foreground">
                 {event.date_event} • {event.location}
               </p>
@@ -71,7 +120,7 @@ const MyEvents = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/dashboard/edit_event/${event.id}`)}
+                  onClick={(e) => navigate(`/dashboard/edit_event/${event.id}`)}
                 >
                   Edit
                 </Button>

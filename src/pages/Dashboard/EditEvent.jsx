@@ -9,6 +9,7 @@ import { AlertCircle } from "lucide-react";
 import "../../styles/dashboard.css";
 import { toast } from "sonner";
 import supabase from "@/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -76,12 +77,44 @@ const EditEvent = () => {
       toast.success("Event Updated");
     }
   };
-  if (loading || contextLoading) return <p>Loading...</p>;
+  if (loading || contextLoading){
+     return (
+      <>
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-4 mt-8">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="space-y-4">
+              <Skeleton className="h-8 w-1/2" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-3/4" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-4 ">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="space-y-4">
+              <Skeleton className="h-8 w-1/2" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-3/4" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-4 ">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="space-y-4">
+              <Skeleton className="h-8 w-1/2" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-3/4" />
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
   if (!eventData) return <p>Event not found.</p>;
 
   return (
     <>
-      <div className="new_loan_container mt-5">
+      <div className="mobile_container mt-5">
         <Card className="px-3 bg-rose-600 text-white ">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

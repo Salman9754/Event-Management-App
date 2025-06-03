@@ -12,6 +12,7 @@ import MyEvents from "@/pages/Dashboard/MyEvents";
 import Participents from "@/pages/Dashboard/Participents";
 import DashboardLayout from "@/Layout/DashboardLayout";
 import EditEvent from "@/pages/Dashboard/EditEvent";
+import EventDetailPage from "@/pages/Dashboard/EventDetail";
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -35,6 +36,7 @@ const AppRoutes = () => {
             <Route path="create_event" element={<CreateEvent />} />
             <Route path="my-events" element={<MyEvents />} />
             <Route path="edit_event/:eventId" element={<EditEvent />} />
+            <Route path="event_detail/:eventId" element={<EventDetailPage />} />
             <Route path="participents" element={<Participents />} />
           </Route>
         </Route>
