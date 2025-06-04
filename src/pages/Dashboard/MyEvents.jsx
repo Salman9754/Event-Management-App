@@ -37,8 +37,19 @@ const MyEvents = () => {
     if (error) {
       toast.error("Failed to delete event:", error.message);
     } else {
-      fetchData();
-      toast.success("Event Deleted");
+      try {
+        const { error } = await supabase
+          .from("participiants")
+          .delete()
+          .eq("event_id", eventId);
+        if (error) throw error;
+        else {
+          fetchData();
+          toast.success("Event Deleted");
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
     }
   };
   useEffect(() => {

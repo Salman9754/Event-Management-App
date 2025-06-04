@@ -1,7 +1,8 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useClientInfo } from "@/context/ClientInfoContext";
 import { Card, CardContent } from "@/components/ui/card";
+import supabase from "@/supabase/client";
 import {
   Select,
   SelectContent,
@@ -21,27 +22,28 @@ const Participents = () => {
     try {
       const FetchData = async () => {
         const { data, error } = await supabase.from("participiants").select();
-        if(error) throw error
-        if(data){
-          setparticipiants(data)
+        if (error) throw error;
+        if (data) {
+          setparticipiants(data);
         }
       };
+      FetchData();
     } catch (error) {
-      log
+      console.log(error.message);
     }
   }, []);
 
   const eventsWithParticipantCount = useMemo(() => {
-    return events.map((event) => {
-      const count = participants.filter((p) => p.event_id === event.id).length;
+    return EventData.map((event) => {
+      const count = participiants.filter((p) => p.event_id === event.id).length;
       return { ...event, participantCount: count };
     });
-  }, [events, participants]);
+  }, [EventData, participiants]);
 
   const sortedEvents = useMemo(() => {
     return [...eventsWithParticipantCount].sort((a, b) => {
-      if (sortBy === "date_asc") return new Date(a.date) - new Date(b.date);
-      if (sortBy === "date_desc") return new Date(b.date) - new Date(a.date);
+      if (sortBy === "date_asc") return new Date(a.date_event) - new Date(b.date_event);
+      if (sortBy === "date_desc") return new Date(b.date_event) - new Date(a.date_event);
       if (sortBy === "participants_desc")
         return b.participantCount - a.participantCount;
       if (sortBy === "participants_asc")
@@ -53,31 +55,35 @@ const Participents = () => {
   }, [eventsWithParticipantCount, sortBy]);
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-semibold">Events & Participants Overview</h1>
+    <div className="max-w-4xl mx-auto p-4 space-y-6 mobile_container">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-center">
+        Events & Participants Overview
+      </h1>
 
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <p className="text-sm text-muted-foreground">Total Events</p>
-            <p className="text-2xl font-bold text-primary">10</p>
+            <p className="text-xl sm:text-2xl font-bold text-primary">
+              {EventData.length}
+            </p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <p className="text-sm text-muted-foreground">Total Participants</p>
-            <p className="text-2xl font-bold text-primary">30</p>
+            <p className="text-xl sm:text-2xl font-bold text-primary">
+              {totalParticipants}
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Sort */}
       <div className="flex justify-end">
-        <Select
-        //  value={sortBy} onValueChange={setSortBy}
-        >
-          <SelectTrigger className="w-[220px]">
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-[180px] sm:w-[220px]">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
@@ -107,24 +113,25 @@ const Participents = () => {
           {sortedEvents.map((event) => (
             <li
               key={event.id}
-              onClick={() => navigate(`/dashboard/event/${event.id}`)}
-              className="cursor-pointer border rounded-lg p-4 bg-background hover:shadow transition-shadow flex justify-between items-center"
+              onClick={() => navigate(`/dashboard/event_detail/${event.id}`)}
+              className="cursor-pointer border rounded-lg p-4 bg-background hover:shadow transition-shadow flex justify-between items-center gap-4"
             >
               <div>
-                <p className="text-base font-medium text-foreground">
+                <p className="text-base sm:text-lg font-medium text-foreground">
                   {event.title}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {event.date
-                    ? new Date(event.date).toLocaleDateString()
+                  {event.date_event
+                    ? new Date(event.date_event).toLocaleDateString()
                     : "No Date"}
                 </p>
               </div>
-              <div className="flex items-center space-x-4">
-                <Badge variant="secondary">
+              <div className="flex items-center space-x-2 sm:space-x-4">
+                <Badge className="text-xs sm:text-sm" variant="secondary">
                   {event.participantCount} Participants
                 </Badge>
                 <Badge
+                  className="text-xs sm:text-sm"
                   variant={
                     event.status === "approved"
                       ? "success"
