@@ -79,25 +79,40 @@ const NewEventForm = () => {
 
         imageUrl = publicData?.publicUrl;
       }
-      const { error } = await supabase.from("events").insert({
-        title: title,
-        description: description,
-        date_event: dateOfEvent,
-        location: Location,
-        category: category,
-        image_url: imageUrl,
-        user_Id: userId,
-      });
+      const { data: newEvent, error } = await supabase
+        .from("events")
+        .insert({
+          title: title,
+          description: description,
+          date_event: dateOfEvent,
+          location: Location,
+          category: category,
+          image_url: imageUrl,
+          user_Id: userId,
+        })
+        .select()
+        .single();
 
       if (error) throw error;
-
-      notify();
-      setTimeout(() => {
-        reset();
-        if (imageRef.current) {
-          imageRef.current.value = null;
-        }
-      }, 1000);
+      try {
+        await supabase.from("activity").insert([
+          {
+            event_id: newEvent.id,
+            event_name: title,
+            type: "created",
+            user_id: userId,
+          },
+        ]);
+        notify();
+        setTimeout(() => {
+          reset();
+          if (imageRef.current) {
+            imageRef.current.value = null;
+          }
+        }, 1000);
+      } catch (error) {
+        console.log(error.message);
+      }
     } catch (err) {
       notifyError();
       console.error("Error submitting event:", err.message);

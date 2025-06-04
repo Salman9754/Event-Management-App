@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useClientInfo } from "@/context/ClientInfoContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
+import supabase from "@/supabase/client";
 import {
   Card,
   CardHeader,
@@ -14,11 +15,14 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import LogOutBtn from "@/components/LogOutBtn";
+import { useAuth } from "@/context/RouteContext";
 
 const DashboardPage = () => {
   const { loading, clientData, EventData, Partcipiants } = useClientInfo();
+  const { user } = useAuth();
   const [pending, setpending] = useState([]);
   const [Approved, setApproved] = useState([]);
+  const [activity, setactivity] = useState([]);
   useEffect(() => {
     if (EventData?.length) {
       const pendingData = EventData.filter((item) => item.status === "pending");
@@ -26,6 +30,23 @@ const DashboardPage = () => {
       const approved = EventData.filter((item) => item.status === "approved");
       setApproved(approved);
     }
+  }, [EventData]);
+  useEffect(() => {
+    const Data = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("activity")
+          .select("*")
+          .eq("user_id", user.id);
+        if (error) throw error;
+        if (data) {
+          setactivity(data);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    Data();
   }, [EventData]);
 
   if (loading) {
@@ -133,16 +154,43 @@ const DashboardPage = () => {
           <Card>
             <CardHeader>
               <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>
-                <br />
+              <CardDescription className="text-sm text-muted-foreground">
+                Last few event changes
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col justify-center items-center gap-4">
-              <p>No recent activity to display</p>
-              <Link to={"/dashboard/create_event"}>
-                {" "}
-                <Button>Create New Event</Button>
-              </Link>
+
+            <CardContent className="space-y-4">
+              {activity.length === 0 ? (
+                <div className="text-center text-muted-foreground text-sm flex flex-col">
+                  No recent activity yet
+                  <Link to="/dashboard/create_event">
+                    <Button className="mt-3">Create new event</Button>
+                  </Link>
+                </div>
+              ) : (
+                <ul className="space-y-3 text-sm">
+                  {activity.map((item, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 border-b pb-2 last:border-none"
+                    >
+                      <span className="text-xl">
+                        {item.type === "created" ? "✅" : "🗑️"}
+                      </span>
+                      <div>
+                        <p>
+                          {item.type === "created"
+                            ? `Created event "${item.event_name}"`
+                            : `Deleted event "${item.event_name}"`}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(item.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </CardContent>
           </Card>
         </div>

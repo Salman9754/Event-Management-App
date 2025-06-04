@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useClientInfo } from "@/context/ClientInfoContext";
+import { useAuth } from "@/context/RouteContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const MyEvents = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { EventData, fetchData, loading } = useClientInfo();
   const handleDelete = async (eventId, image) => {
     try {
@@ -32,6 +34,7 @@ const MyEvents = () => {
     } catch (error) {
       console.log(error);
     }
+    const theEvent = EventData.find((item) => item.id === eventId);
     const { error } = await supabase.from("events").delete().eq("id", eventId);
 
     if (error) {
@@ -44,8 +47,20 @@ const MyEvents = () => {
           .eq("event_id", eventId);
         if (error) throw error;
         else {
-          fetchData();
-          toast.success("Event Deleted");
+          try {
+            await supabase.from("activity").insert([
+              {
+                event_id: eventId,
+                event_name: theEvent.title,
+                type: "deleted",
+                user_id: user.id,
+              },
+            ]);
+            fetchData();
+            toast.success("Event Deleted");
+          } catch (error) {
+            console.log(error.message);
+          }
         }
       } catch (error) {
         console.log(error.message);
