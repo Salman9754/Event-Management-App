@@ -1,8 +1,7 @@
-import React, { useContext, useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useClientInfo } from "@/context/ClientInfoContext";
 import { Card, CardContent } from "@/components/ui/card";
-import supabase from "@/supabase/client";
 import {
   Select,
   SelectContent,
@@ -13,37 +12,25 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const Participents = () => {
-  const { EventData, loading } = useClientInfo();
+  const { EventData, loading, Partcipiants } = useClientInfo();
   const navigate = useNavigate();
   const [sortBy, setSortBy] = useState("date_desc");
-  const [participiants, setparticipiants] = useState([]);
-  const totalParticipants = participiants.length;
-  useEffect(() => {
-    try {
-      const FetchData = async () => {
-        const { data, error } = await supabase.from("participiants").select();
-        if (error) throw error;
-        if (data) {
-          setparticipiants(data);
-        }
-      };
-      FetchData();
-    } catch (error) {
-      console.log(error.message);
-    }
-  }, []);
+
+  const totalParticipants = Partcipiants.length;
 
   const eventsWithParticipantCount = useMemo(() => {
     return EventData.map((event) => {
-      const count = participiants.filter((p) => p.event_id === event.id).length;
+      const count = Partcipiants.filter((p) => p.event_id === event.id).length;
       return { ...event, participantCount: count };
     });
-  }, [EventData, participiants]);
+  }, [EventData, Partcipiants]);
 
   const sortedEvents = useMemo(() => {
     return [...eventsWithParticipantCount].sort((a, b) => {
-      if (sortBy === "date_asc") return new Date(a.date_event) - new Date(b.date_event);
-      if (sortBy === "date_desc") return new Date(b.date_event) - new Date(a.date_event);
+      if (sortBy === "date_asc")
+        return new Date(a.date_event) - new Date(b.date_event);
+      if (sortBy === "date_desc")
+        return new Date(b.date_event) - new Date(a.date_event);
       if (sortBy === "participants_desc")
         return b.participantCount - a.participantCount;
       if (sortBy === "participants_asc")
@@ -103,7 +90,21 @@ const Participents = () => {
 
       {/* Events List */}
       {loading ? (
-        <p className="text-center text-muted-foreground">Loading...</p>
+        <ul className="space-y-3">
+          {[...Array(3)].map((_, index) => (
+            <li
+              key={index}
+              className="border rounded-lg p-3 sm:p-4 bg-white dark:bg-muted flex flex-col sm:flex-row justify-between sm:items-center gap-3 animate-pulse"
+            >
+              <div className="space-y-2 w-full">
+                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-1/2"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-1/3"></div>
+              </div>
+              <div className="h-8 w-20 bg-gray-300 dark:bg-gray-700 rounded"></div>
+            </li>
+          ))}
+        </ul>
       ) : sortedEvents.length === 0 ? (
         <p className="text-center text-muted-foreground">
           No events available.

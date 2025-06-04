@@ -7,6 +7,7 @@ export const ClientInfoProvider = ({ children }) => {
   const { user, sessionChecked } = useAuth();
   const [clientData, setclientData] = useState([]);
   const [EventData, setEventData] = useState([]);
+  const [Partcipiants, setPartcipiants] = useState([]);
   const [loading, setloading] = useState(true);
   const fetchData = async () => {
     try {
@@ -27,6 +28,18 @@ export const ClientInfoProvider = ({ children }) => {
               if (eventError) throw eventError;
               if (eventData) {
                 setEventData(eventData);
+                try {
+                  const { data: partData, error: partError } = await supabase
+                    .from("participiants")
+                    .select("*")
+                    .eq("user_id", user.id);
+                  if (partError) throw partError;
+                  if (partData) {
+                    setPartcipiants(partData);
+                  }
+                } catch (error) {
+                  console.log(error.message);
+                }
               }
             } catch (error) {
               console.log(error);
@@ -55,6 +68,7 @@ export const ClientInfoProvider = ({ children }) => {
         loading,
         clientData,
         EventData,
+        Partcipiants,
         fetchData,
         clearClientData: () => setclientData([]),
       }}

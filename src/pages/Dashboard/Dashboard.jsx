@@ -16,7 +16,7 @@ import {
 import LogOutBtn from "@/components/LogOutBtn";
 
 const DashboardPage = () => {
-  const { loading, clientData, EventData } = useClientInfo();
+  const { loading, clientData, EventData, Partcipiants } = useClientInfo();
   const [pending, setpending] = useState([]);
   const [Approved, setApproved] = useState([]);
   useEffect(() => {
@@ -123,7 +123,7 @@ const DashboardPage = () => {
           <div className="cards w-full">
             <DashboardCard
               heading={" Total Participants"}
-              headingCount={0}
+              headingCount={Partcipiants.length}
               icon={Users}
               iconColor={"text-purple-500"}
             />

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
 import { useClientInfo } from "@/context/ClientInfoContext";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { useAuth } from "@/context/RouteContext";
 import supabase from "@/supabase/client";
 import {
   Dialog,
@@ -15,19 +15,18 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import DeleteModal from "@/components/DeleteModal";
 
 const EventDetailPage = () => {
-  const [Participiants, setParticipiants] = useState([]);
+  const { user } = useAuth();
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
   const [phone, setphone] = useState("");
-  const [loading, setloading] = useState(false);
   const [open, setopen] = useState(false);
   const { eventId } = useParams();
-  const { EventData } = useClientInfo();
+  const { EventData, Partcipiants, fetchData, loading } = useClientInfo();
   const event = EventData.find((event) => String(event.id) === String(eventId));
   const handleAddParticipant = async (e) => {
     e.preventDefault();
@@ -37,13 +36,14 @@ const EventDetailPage = () => {
         email: email,
         phone: phone,
         event_id: eventId,
+        user_id: user.id,
       });
       if (error) throw error;
       setname("");
       setemail("");
       setphone("");
       setopen(false);
-      Data();
+      fetchData();
       setTimeout(() => {
         toast.success("Participiant added successfully");
       }, 1000);
@@ -59,32 +59,12 @@ const EventDetailPage = () => {
         .eq("id", Id);
       if (error) throw error;
       toast.success("Participiant deleted successfully");
-      Data();
+      fetchData();
     } catch (error) {
       console.log(error.message);
       toast.error(error.message);
     }
   };
-  const Data = async () => {
-    try {
-      setloading(true);
-      const { data, error } = await supabase
-        .from("participiants")
-        .select("*")
-        .eq("event_id", eventId);
-      if (error) throw error;
-      if (data) {
-        setParticipiants(data);
-      }
-    } catch (error) {
-      console.log(error.message);
-    } finally {
-      setloading(false);
-    }
-  };
-  useEffect(() => {
-    Data();
-  }, [eventId]);
   if (!event) {
     return (
       <>
@@ -224,9 +204,9 @@ const EventDetailPage = () => {
                 </li>
               ))}
             </ul>
-          ) : Participiants.length > 0 ? (
+          ) : Partcipiants.length > 0 ? (
             <ul className="space-y-3">
-              {Participiants.map((p) => (
+              {Partcipiants.map((p) => (
                 <li
                   key={p.id}
                   className="border rounded-lg p-3 sm:p-4 bg-white dark:bg-muted flex flex-col sm:flex-row justify-between sm:items-center gap-3"
