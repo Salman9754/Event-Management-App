@@ -14,11 +14,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-// import { useClientInfo } from "@/context/supabaseClientInfo";
 
 const LoginForm = () => {
   //   const { fetchData } = useClientInfo();
-  const { role } = useAuth();
+  const { role, checkSession } = useAuth();
   const navigate = useNavigate();
   const Unnotify = (error) => toast.error(error.message);
   const [loading, setloading] = useState(false);
@@ -41,6 +40,7 @@ const LoginForm = () => {
       if (data) {
         // await fetchData();
         form.reset();
+        checkSession();
         if (role === "user") {
           navigate("/dashboard");
         } else {

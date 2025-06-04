@@ -1,6 +1,13 @@
 import { React, useState, useEffect } from "react";
 import DashboardCard from "@/components/DashboardCard";
-import { CreditCard, CheckCircle, Gauge, Users } from "lucide-react";
+import {
+  CreditCard,
+  CheckCircle,
+  Gauge,
+  Users,
+  CheckCircleIcon,
+  Trash2,
+} from "lucide-react";
 import "../../styles/dashboard.css";
 import { Button } from "@/components/ui/button";
 import { useClientInfo } from "@/context/ClientInfoContext";
@@ -174,8 +181,12 @@ const DashboardPage = () => {
                       key={index}
                       className="flex items-start gap-3 border-b pb-2 last:border-none"
                     >
-                      <span className="text-xl">
-                        {item.type === "created" ? "✅" : "🗑️"}
+                      <span className="text-xl text-muted-foreground">
+                        {item.type === "created" ? (
+                          <CheckCircleIcon className="w-5 h-5 text-green-600" />
+                        ) : (
+                          <Trash2 className="w-5 h-5 text-red-600" />
+                        )}
                       </span>
                       <div>
                         <p>
