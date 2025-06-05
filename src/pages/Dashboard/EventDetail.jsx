@@ -180,7 +180,7 @@ const EventDetailPage = () => {
                       value={phone}
                       onChange={(e) => setphone(e.target.value)}
                     />
-                    <Button type="submit">
+                    <Button type="submit" className='w-full'>
                       {partLoading ? (
                         <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
                       ) : (
