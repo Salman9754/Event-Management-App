@@ -30,6 +30,7 @@ const DashboardPage = () => {
   const [pending, setpending] = useState([]);
   const [Approved, setApproved] = useState([]);
   const [activity, setactivity] = useState([]);
+  const [actLoading, setactLoading] = useState(false);
   useEffect(() => {
     if (EventData?.length) {
       const pendingData = EventData.filter((item) => item.status === "pending");
@@ -41,21 +42,23 @@ const DashboardPage = () => {
   useEffect(() => {
     const Data = async () => {
       try {
+        setactLoading(true);
         const { data, error } = await supabase
           .from("activity")
           .select("*")
           .eq("user_id", user.id);
         if (error) throw error;
         if (data) {
-          setactivity(data);
+          setactivity(data)
         }
       } catch (error) {
         console.log(error.message);
+      } finally {
+        setactLoading(false);
       }
     };
     Data();
-  }, [EventData]);
-
+  }, [user?.id]);
   if (loading) {
     return (
       <>
@@ -167,7 +170,23 @@ const DashboardPage = () => {
             </CardHeader>
 
             <CardContent className="space-y-4">
-              {activity.length === 0 ? (
+              {actLoading ? (
+                <ul className="space-y-3">
+                  {[...Array(3)].map((_, index) => (
+                    <li
+                      key={index}
+                      className="border rounded-lg p-3 sm:p-4 bg-white dark:bg-muted flex flex-col sm:flex-row justify-between sm:items-center gap-3 animate-pulse"
+                    >
+                      <div className="space-y-2 w-full">
+                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-1/2"></div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-1/3"></div>
+                      </div>
+                      <div className="h-8 w-20 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                    </li>
+                  ))}
+                </ul>
+              ) : activity.length === 0 ? (
                 <div className="text-center text-muted-foreground text-sm flex flex-col">
                   No recent activity yet
                   <Link to="/dashboard/create_event">

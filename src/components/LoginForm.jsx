@@ -41,11 +41,13 @@ const LoginForm = () => {
         // await fetchData();
         form.reset();
         checkSession();
-        if (role === "user") {
-          navigate("/dashboard");
-        } else {
-          navigate("/admin");
-        }
+        setTimeout(() => {
+          if (role === "user") {
+            navigate("/dashboard");
+          } else {
+            navigate("/admin");
+          }
+        }, 2000);
       }
     } catch (error) {
       Unnotify(error);

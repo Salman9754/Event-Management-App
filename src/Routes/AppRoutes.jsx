@@ -3,7 +3,9 @@ import React from "react";
 import Home from "@/pages/Home";
 import SignUpPage from "@/pages/SignUpPage";
 import Login from "@/pages/Login";
-import AdminPage from "@/pages/Dashboard/AdminPage";
+import AdminLayout from "@/Layout/AdminLayout";
+import AdminPage from "@/pages/Admin/AdminPage";
+import ManageEvents from "@/pages/Admin/ManageEvents";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import RoleBasedRoutes from "./RoleBaseRoutes";
 import PublicRoute from "./PublicRoutes";
@@ -19,7 +21,10 @@ const AppRoutes = () => {
       <Routes>
         {/* Admin Routes */}
         <Route element={<RoleBasedRoutes requiredRole="admin" />}>
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminPage />} />
+             <Route path="/admin/manage"  element={<ManageEvents />} />
+          </Route>
         </Route>
 
         {/* Public Routes */}

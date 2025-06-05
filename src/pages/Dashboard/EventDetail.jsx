@@ -25,12 +25,14 @@ const EventDetailPage = () => {
   const [email, setemail] = useState("");
   const [phone, setphone] = useState("");
   const [open, setopen] = useState(false);
+  const [partLoading, setpartLoading] = useState(false);
   const { eventId } = useParams();
   const { EventData, Partcipiants, fetchData, loading } = useClientInfo();
   const event = EventData.find((event) => String(event.id) === String(eventId));
   const handleAddParticipant = async (e) => {
     e.preventDefault();
     try {
+      setpartLoading(true);
       const { error } = await supabase.from("participiants").insert({
         name: name,
         email: email,
@@ -49,6 +51,8 @@ const EventDetailPage = () => {
       }, 1000);
     } catch (error) {
       console.log(error.message);
+    } finally {
+      setpartLoading(false);
     }
   };
   const handleDelete = async (Id) => {
@@ -176,8 +180,12 @@ const EventDetailPage = () => {
                       value={phone}
                       onChange={(e) => setphone(e.target.value)}
                     />
-                    <Button type="submit" className="w-full">
-                      Submit
+                    <Button type="submit">
+                      {partLoading ? (
+                        <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+                      ) : (
+                        "Submit" // Text when loading is false
+                      )}
                     </Button>
                   </form>
                 </DialogContent>

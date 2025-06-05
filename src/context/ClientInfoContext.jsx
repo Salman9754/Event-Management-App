@@ -6,6 +6,7 @@ export const ClientInfoContext = createContext(null);
 export const ClientInfoProvider = ({ children }) => {
   const { user, sessionChecked } = useAuth();
   const [clientData, setclientData] = useState([]);
+  const [allUsersData, setallUsersData] = useState([]);
   const [EventData, setEventData] = useState([]);
   const [Partcipiants, setPartcipiants] = useState([]);
   const [loading, setloading] = useState(true);
@@ -36,6 +37,16 @@ export const ClientInfoProvider = ({ children }) => {
                   if (partError) throw partError;
                   if (partData) {
                     setPartcipiants(partData);
+                    try {
+                      const { data: allUsers, error: allErrors } =
+                        await supabase.from("users").select("*");
+                      if (allErrors) throw allErrors;
+                      if (allUsers) {
+                        setallUsersData(allUsers);
+                      }
+                    } catch (error) {
+                      console.log(error.message);
+                    }
                   }
                 } catch (error) {
                   console.log(error.message);
@@ -66,6 +77,7 @@ export const ClientInfoProvider = ({ children }) => {
     <ClientInfoContext.Provider
       value={{
         loading,
+        allUsersData,
         clientData,
         EventData,
         Partcipiants,

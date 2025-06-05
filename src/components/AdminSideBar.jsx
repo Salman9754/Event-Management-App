@@ -1,24 +1,23 @@
 import { useState } from "react";
 import {
   Home,
+  LogOut,
   PlusCircle,
   User,
   Menu,
   X,
-  NotebookPen,
+  Settings,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import MyLogo from "./MyLogo";
 
 const navItems = [
-  { name: "Dashboard", icon: Home, to: "/dashboard", end: true },
-  { name: "Create Event", icon: PlusCircle, to: "/dashboard/create_event" },
-  { name: "My Events", icon: NotebookPen, to: "/dashboard/my-events" },
-  { name: "Participents", icon: User, to: "/dashboard/participents" },
+  { name: "Admin", icon: User, to: "/admin", end: true },
+  { name: "Manage Events", icon: Settings, to: "/admin/manage", end: true },
 ];
 
-export default function Sidebar() {
+export default function AdminSideBar() {
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = () => setIsOpen((prev) => !prev);
   const location = useLocation();
