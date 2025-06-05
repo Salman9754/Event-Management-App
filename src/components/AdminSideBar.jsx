@@ -1,8 +1,5 @@
 import { useState } from "react";
 import {
-  Home,
-  LogOut,
-  PlusCircle,
   User,
   Menu,
   X,

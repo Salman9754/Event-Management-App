@@ -23,23 +23,51 @@ import { Skeleton } from "@/components/ui/skeleton";
 const ManageEvents = () => {
   const { allUsersData, loading } = useClientInfo();
   const [allEvents, setallEvents] = useState([]);
-  useEffect(() => {
-    const data = async () => {
-      try {
-        const { data: eventData, error: eventError } = await supabase
-          .from("events")
-          .select("*");
-        if (eventError) throw eventError;
-        if (eventData) {
-          setallEvents(eventData);
-        }
-      } catch (error) {
-        console.log(error.message);
+  const handleApprove = async (Id) => {
+    try {
+      const { error } = await supabase
+        .from("events")
+        .update({ status: "approved" })
+        .eq("id", Id);
+      if (error) throw error;
+      if (!error) {
+        data();
       }
-    };
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const handleReject = async (Id) => {
+    try {
+      const { error } = await supabase
+        .from("events")
+        .update({ status: "rejected" })
+        .eq("id", Id);
+      if (error) throw error;
+      if (!error) {
+        data();
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const data = async () => {
+    try {
+      const { data: eventData, error: eventError } = await supabase
+        .from("events")
+        .select("*");
+      if (eventError) throw eventError;
+      if (eventData) {
+        setallEvents(eventData);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  useEffect(() => {
     data();
   }, []);
-if (loading) {
+  if (loading) {
     return (
       <>
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-4 mt-8">
